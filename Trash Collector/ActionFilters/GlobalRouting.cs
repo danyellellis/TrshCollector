@@ -6,7 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Trash_Collector
+namespace Trash_Collector.ActionFilters
 {
     public class GlobalRouting : IActionFilter
 
@@ -30,9 +30,11 @@ namespace Trash_Collector
                 } 
             } 
         }
-    }
-    public void OnActionExecuted(ActionExecutedContext context)
-    {
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
 
+        }
     }
+
+    
 }
