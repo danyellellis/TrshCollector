@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +12,11 @@ using Trash_Collector.Data;
 using Trash_Collector.Models;
 
 namespace Trash_Collector.Controllers
+
 {
+    [Authorize(Roles = "Customer")]
     public class CustomersController : Controller
+
     {
         private readonly ApplicationDbContext _context;
 
@@ -22,6 +26,7 @@ namespace Trash_Collector.Controllers
         }
 
         // GET: Customers
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             //Two lines from bottom of page 12
@@ -30,12 +35,18 @@ namespace Trash_Collector.Controllers
             //return View(customer);
             //Also need to delete Index.cshtml file in Custeomrs views and create new vie based on Single Customer Detail template
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customer = _context.Customer.Where(c => c.IdentityUserId == userId).SingleOrDefault();
+            var customer = _context.Customer.Where(c => c.IdentityUserId == 
+            userId).SingleOrDefault();
+            if (customer == null)
+            {
+                return RedirectToAction("Create");
+            }
             
             return View(customer);
         }
 
         // GET: Customers/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -55,6 +66,7 @@ namespace Trash_Collector.Controllers
         }
 
         // GET: Customers/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["IdentityUserId"] = new SelectList(_context.Users, "Id", "Id");
@@ -64,6 +76,7 @@ namespace Trash_Collector.Controllers
         // POST: Customers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,IdentityUserId")] Customer customer)
@@ -73,7 +86,8 @@ namespace Trash_Collector.Controllers
                 //var userID =...
                 //customer.IDentity...
                 var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                customer.IdentityUserId = userId;
+                var customer1 = _context.Customer.Where(c => c.IdentityUserId == 
+                userId).SingleOrDefault();
 
 
 
@@ -86,6 +100,7 @@ namespace Trash_Collector.Controllers
         }
 
         // GET: Customers/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +120,7 @@ namespace Trash_Collector.Controllers
         // POST: Customers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IdentityUserId")] Customer customer)
@@ -139,6 +155,7 @@ namespace Trash_Collector.Controllers
         }
 
         // GET: Customers/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,6 +175,7 @@ namespace Trash_Collector.Controllers
         }
 
         // POST: Customers/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

@@ -5,10 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SQLitePCL;
+using Trash_Collector.ActionFilters;
 using Trash_Collector.Models;
 
 namespace Trash_Collector.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,7 +20,7 @@ namespace Trash_Collector.Controllers
         {
             _logger = logger;
         }
-
+        //[ServiceFilter(typeof(GlobalRouting))]
         public IActionResult Index()
         {
             if (this.User.IsInRole("Customer"))
@@ -26,6 +29,8 @@ namespace Trash_Collector.Controllers
             }
             return View();
         }
+
+       
 
         public IActionResult Privacy()
         {
